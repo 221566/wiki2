@@ -1,5 +1,6 @@
 package com.lwx.config;
 
+import org.mybatis.spring.annotation.MapperScan;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.boot.SpringApplication;
@@ -9,6 +10,7 @@ import org.springframework.core.env.Environment;
 
 @SpringBootApplication()
 @ComponentScan("com.lwx")//可以支持多个包加{"com.lwx","com.lwx","com.lwx"}然后逗号分隔
+@MapperScan("com.lwx.mapper")
 public class Wiki2Application {
     private static final Logger LOG = LoggerFactory.getLogger(Wiki2Application.class);
     public static void main(String[] args) {
