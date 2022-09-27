@@ -1,7 +1,8 @@
 package com.lwx.controller;
 
-import com.lwx.domain.Ebook;
+import com.lwx.req.EbookReq;
 import com.lwx.resp.CommonResp;
+import com.lwx.resp.EbookResp;
 import com.lwx.service.EbookService;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
@@ -17,9 +18,9 @@ public class EbookController {
     private EbookService ebookService;
 
     @GetMapping("/selectEbook")
-    public CommonResp selectEbook(){
-        CommonResp<List<Ebook>> resp = new CommonResp<>();
-        List<Ebook> list = ebookService.selectEbook();
+    public CommonResp selectEbook(EbookReq ebookReq){
+        CommonResp<List<EbookResp>> resp = new CommonResp<>();
+        List<EbookResp> list = ebookService.selectEbook(ebookReq);
         resp.setContent(list);
         return resp;
     }
