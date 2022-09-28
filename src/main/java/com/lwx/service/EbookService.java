@@ -7,6 +7,7 @@ import com.lwx.req.EbookReq;
 import com.lwx.resp.EbookResp;
 import com.lwx.util.CopyUtil;
 import org.springframework.stereotype.Service;
+import org.springframework.util.ObjectUtils;
 
 import javax.annotation.Resource;
 import java.util.List;
@@ -20,7 +21,9 @@ public class EbookService {
         EbookExample ebookExample = new EbookExample();
 //        Criteria相当于where
         EbookExample.Criteria criteria = ebookExample.createCriteria();
-        criteria.andNameLike("%"+ebookReq.getName()+"%");
+        if(!ObjectUtils.isEmpty(ebookReq.getName())) {
+            criteria.andNameLike("%" + ebookReq.getName() + "%");
+        }
         List<Ebook> ebookList = ebookMapper.selectByExample(ebookExample);
 //        持久层返回list<Ebook>需要转成List<EbookResp>再返回控制层，需要用到循环
 //        List<EbookResp> respList = new ArrayList<>();
