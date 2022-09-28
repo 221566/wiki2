@@ -3,22 +3,22 @@
 
       <the-header></the-header>
       <router-view/>
+      <the-footer></the-footer>
 
-    <a-layout-footer style="text-align: center">
-      Ant Design ©2018 Created by Ant UED
-    </a-layout-footer>
   </a-layout>
 </template>
 <script>
   import { UserOutlined, LaptopOutlined, NotificationOutlined } from '@ant-design/icons-vue';
   import { defineComponent, ref } from 'vue';
   import theHeader from '@/components/the-header.vue'; // @ is an alias to /src
+  import theFooter from '@/components/the-footer.vue'; // @ is an alias to /src
   export default defineComponent({
     components: {
       UserOutlined,
       LaptopOutlined,
       NotificationOutlined,
       theHeader,
+      theFooter,
     },
 
     setup() {
