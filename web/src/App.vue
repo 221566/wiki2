@@ -2,6 +2,7 @@
   <a-layout>
 
       <the-header></the-header>
+<!-- <router-view/>动态页面     -->
       <router-view/>
       <the-footer></the-footer>
 
