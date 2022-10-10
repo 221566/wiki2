@@ -125,11 +125,20 @@
       const modalLoading = ref(false);
       const handleModalOk = () => {
         modalLoading.value = true;
-        setTimeout(() => {
-          modalVisible.value = false;
-          modalLoading.value = false;
-        }, 2000);
+        axios.post("/ebook/save",ebook.value).then((response) =>{
+          const data = response.data;
+          if (data.success){
+            modalVisible.value = false;
+            modalLoading.value = false;
+            //重新加载列表
+            handleQuery({
+              page:pagination.value.current,//重新查询分页组件当前所在的页码
+              size:pagination.value.pageSize
+            });
+          }
+        });
       };
+
       const edit = (record: any) => {
         modalVisible.value = true;
         ebook.value = record

@@ -5,8 +5,9 @@ import com.github.pagehelper.PageInfo;
 import com.lwx.domain.Ebook;
 import com.lwx.domain.EbookExample;
 import com.lwx.mapper.EbookMapper;
-import com.lwx.req.EbookReq;
-import com.lwx.resp.EbookResp;
+import com.lwx.req.EbookQueryReq;
+import com.lwx.req.EbookSaveReq;
+import com.lwx.resp.EbookQueryResp;
 import com.lwx.resp.PageResp;
 import com.lwx.util.CopyUtil;
 import org.slf4j.Logger;
@@ -23,7 +24,7 @@ public class EbookService {
     @Resource
     private EbookMapper ebookMapper;
 
-    public PageResp<EbookResp> selectEbook(EbookReq ebookReq)  {
+    public PageResp<EbookQueryResp> selectEbook(EbookQueryReq ebookReq)  {
         EbookExample ebookExample = new EbookExample();
 //        Criteria相当于where
         EbookExample.Criteria criteria = ebookExample.createCriteria();
@@ -35,20 +36,29 @@ public class EbookService {
         PageInfo<Ebook> pageInfo = new PageInfo<>(ebookList);
         LOG.info("总行数：{}",pageInfo.getTotal());
         LOG.info("总页数：{}",pageInfo.getPages());
-//        持久层返回list<Ebook>需要转成List<EbookResp>再返回控制层，需要用到循环
-//        List<EbookResp> respList = new ArrayList<>();
+//        持久层返回list<Ebook>需要转成List<EbookQueryResp>再返回控制层，需要用到循环
+//        List<EbookQueryResp> respList = new ArrayList<>();
 //        for (Ebook ebook : ebookList) {
-////            EbookResp ebookResp = new EbookResp();
+////            EbookQueryResp ebookResp = new EbookQueryResp();
 ////            BeanUtils.copyProperties(ebook,ebookResp);
 //             对象复制
-//            EbookResp copy = CopyUtil.copy(ebook, EbookResp.class);
+//            EbookQueryResp copy = CopyUtil.copy(ebook, EbookQueryResp.class);
 //            respList.add(copy);
 //        }
 //        列表复制
-        List<EbookResp> list = CopyUtil.copyList(ebookList, EbookResp.class);
-        PageResp<EbookResp> pageResp = new PageResp();
+        List<EbookQueryResp> list = CopyUtil.copyList(ebookList, EbookQueryResp.class);
+        PageResp<EbookQueryResp> pageResp = new PageResp();
         pageResp.setTotal(pageInfo.getTotal());
         pageResp.setList(list);
         return pageResp;
+    }
+
+    public void save(EbookSaveReq req){
+        Ebook ebook = CopyUtil.copy(req,Ebook.class);
+        if (ObjectUtils.isEmpty(req.getId())){
+            ebookMapper.insert(ebook);
+        }else {
+            ebookMapper.updateByPrimaryKey(ebook);
+        }
     }
 }
