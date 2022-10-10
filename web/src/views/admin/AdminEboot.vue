@@ -17,7 +17,7 @@
         <template v-slot:action="{ text, record }">
           <a-space size="small">
 
-            <a-button type="primary">
+            <a-button type="primary" @click="edit">
               编辑
             </a-button>
               <a-button type="danger">
@@ -29,6 +29,14 @@
       </a-table>
     </a-layout-content>
   </a-layout>
+  <a-modal
+          v-model:visible="modalVisible"
+          title="电子书"
+          :confirm-loading="modalLoading"
+          @ok="handleModalOk"
+  >
+    <p>test</p>
+  </a-modal>
 </template>
 
 <script lang="ts">
@@ -99,7 +107,18 @@
           pagination.value.total = data.content.total;
         });
       };
-
+      const modalVisible = ref(false);
+      const modalLoading = ref(false);
+      const handleModalOk = () => {
+        modalLoading.value = true;
+        setTimeout(() => {
+          modalVisible.value = false;
+          modalLoading.value = false;
+        }, 2000);
+      };
+      const edit = () => {
+        modalVisible.value = true;
+      };
       /**
        * 表格点击页码时触发
        */
@@ -121,7 +140,13 @@
         pagination,
         columns,
         loading,
-        handleTableChange
+        handleTableChange,
+
+        edit,
+        modalVisible,
+        modalLoading,
+        handleModalOk
+
       }
     }
   });
