@@ -10,8 +10,10 @@ import com.lwx.req.EbookSaveReq;
 import com.lwx.resp.EbookQueryResp;
 import com.lwx.resp.PageResp;
 import com.lwx.util.CopyUtil;
+import com.lwx.util.SnowFlake;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.util.ObjectUtils;
 
@@ -23,6 +25,9 @@ public class EbookService {
     private static final Logger LOG = LoggerFactory.getLogger(EbookService.class);
     @Resource
     private EbookMapper ebookMapper;
+
+    @Autowired
+    private SnowFlake snowFlake;
 
     public PageResp<EbookQueryResp> selectEbook(EbookQueryReq ebookReq)  {
         EbookExample ebookExample = new EbookExample();
@@ -56,6 +61,7 @@ public class EbookService {
     public void save(EbookSaveReq req){
         Ebook ebook = CopyUtil.copy(req,Ebook.class);
         if (ObjectUtils.isEmpty(req.getId())){
+            ebook.setId(snowFlake.nextId());
             ebookMapper.insert(ebook);
         }else {
             ebookMapper.updateByPrimaryKey(ebook);
