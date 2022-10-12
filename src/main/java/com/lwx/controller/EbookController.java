@@ -9,6 +9,7 @@ import com.lwx.service.EbookService;
 import org.springframework.web.bind.annotation.*;
 
 import javax.annotation.Resource;
+import javax.validation.Valid;
 
 @RestController
 @RequestMapping("/ebook")
@@ -17,7 +18,7 @@ public class EbookController {
     private EbookService ebookService;
 
     @GetMapping("/selectEbook")
-    public CommonResp selectEbook(EbookQueryReq ebookReq){
+    public CommonResp selectEbook(@Valid EbookQueryReq ebookReq){
         CommonResp<PageResp<EbookQueryResp>> resp = new CommonResp<>();
         PageResp<EbookQueryResp> list = ebookService.selectEbook(ebookReq);
         resp.setContent(list);
@@ -33,7 +34,7 @@ public class EbookController {
      *
      * 3、axios的post提交是用appliction/json方式提交的所以要使用@RequestBody注解才能接收到数据
      */
-    public CommonResp save(@RequestBody EbookSaveReq ebookSaveReq){
+    public CommonResp save(@Valid @RequestBody EbookSaveReq ebookSaveReq){
         CommonResp resp = new CommonResp<>();
         ebookService.save(ebookSaveReq);
         return resp;

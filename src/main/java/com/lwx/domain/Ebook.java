@@ -3,6 +3,8 @@ package com.lwx.domain;
 import com.fasterxml.jackson.databind.annotation.JsonSerialize;
 import com.fasterxml.jackson.databind.ser.std.ToStringSerializer;
 
+import javax.validation.constraints.NotNull;
+
 public class Ebook {
     private static final long serialVersionUID = 1L;
     @JsonSerialize(using = ToStringSerializer.class)

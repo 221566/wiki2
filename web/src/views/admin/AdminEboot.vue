@@ -4,9 +4,24 @@
             :style="{ background: '#fff', padding: '24px', margin: 0, minHeight: '280px' }"
     >
       <p>
-        <a-button type="primary" @click="add()" size="large">
-          新增
-        </a-button>
+        <a-form
+                layout="inline"
+                :model="param">
+          <a-form-item>
+            <a-input v-model:value="param.name" placeholder="名称">
+            </a-input>
+          </a-form-item>
+          <a-form-item>
+            <a-button type="primary" @click="handleQuery({page: 1, size: pagination.pageSize})">
+              查询
+            </a-button>
+          </a-form-item>
+          <a-form-item>
+            <a-button type="primary" @click="add()">
+              新增
+            </a-button>
+          </a-form-item>
+        </a-form>
       </p>
       <a-table
               :columns="columns"
@@ -68,10 +83,14 @@
 <script lang="ts">
   import { defineComponent, onMounted, ref } from 'vue';
   import axios from 'axios';
+  import { message } from 'ant-design-vue';
+  import {Tool} from "@/util/tool";
 
   export default defineComponent({
     name: 'AdminEbook',
     setup() {
+      const param = ref();
+      param.value = {};
       const ebooks = ref();
       const pagination = ref({
         current: 1,
@@ -122,39 +141,45 @@
         axios.get("/ebook/selectEbook",{
           params: {
             page: params.page,
-            size: params.size
+            size: params.size,
+            name: param.value.name
           }
         }).then((response) =>{
           loading.value = false;
           const data = response.data;
-          ebooks.value = data.content.list;
+          if(data.success){
+            ebooks.value = data.content.list;
 
-          pagination.value.current = params.page;
-          pagination.value.total = data.content.total;
+            pagination.value.current = params.page;
+            pagination.value.total = data.content.total;
+          }else {
+            message.error(data.message)
+          }
         });
       };
       const ebook = ref({});
       const modalVisible = ref(false);
       const modalLoading = ref(false);
       const handleModalOk = () => {
-        modalLoading.value = true;
+        modalLoading.value = false;
         axios.post("/ebook/save",ebook.value).then((response) =>{
           const data = response.data;
           if (data.success){
             modalVisible.value = false;
-            modalLoading.value = false;
             //重新加载列表
             handleQuery({
               page:pagination.value.current,//重新查询分页组件当前所在的页码
               size:pagination.value.pageSize
             });
+          }else {
+            message.error(data.message);
           }
         });
       };
 
       const edit = (record: any) => {
         modalVisible.value = true;
-        ebook.value = record
+        ebook.value = Tool.copy(record);
       };
 
       const add = () => {
@@ -191,11 +216,13 @@
         });
       });
       return {
+        param,
         ebooks,
         pagination,
         columns,
         loading,
         handleTableChange,
+        handleQuery,
 
         add,
         edit,
