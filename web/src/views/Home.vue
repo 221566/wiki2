@@ -6,6 +6,7 @@
               v-model:openKeys="openKeys"
               mode="inline"
               :style="{ height: '100%', borderRight: 0 }"
+              @click="handleClick"
       >
         <a-menu-item key="welcome">
           <MailOutlined />
@@ -27,7 +28,10 @@
     <a-layout-content
             :style="{ background: '#fff', padding: '24px', margin: 0, minHeight: '280px' }"
     >
-      <a-list item-layout="vertical" size="large" :grid="{ gutter: 16, column: 3 }" :pagination="pagination" :data-source="ebooks">
+      <div class="welcome" v-show="isShowWelcome">
+        <h1>欢迎使用java知识库</h1>
+      </div>
+      <a-list v-show="!isShowWelcome" item-layout="vertical" size="large" :grid="{ gutter: 16, column: 3 }" :pagination="pagination" :data-source="ebooks">
 
         <template #renderItem="{ item }">
           <a-list-item key="item.name">
@@ -104,6 +108,19 @@ export default defineComponent({
       });
     };
 
+    const isShowWelcome = ref(true);
+    const handleClick = (value: any) =>{
+      console.log("menu click",value)
+      // if (value.key === 'welcome'){
+      //   isShowWelcome.value = true;
+      // }else {
+      //   isShowWelcome.value = false;
+      // }
+      //上面是正常用法，下面是简化用法alt加entrr生成的
+      isShowWelcome.value = value.key === 'welcome';
+    };
+
+
     onMounted(()=>{
       handleQueryCategory();
       console.log("onMounted");
@@ -124,7 +141,9 @@ export default defineComponent({
         },
         pageSize: 3,
       },
-      level1
+      level1,
+      isShowWelcome,
+      handleClick
     //  actions : [{
     //   type: 'StarOutlined',
     //   text: '156',
