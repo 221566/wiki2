@@ -109,27 +109,42 @@ export default defineComponent({
     };
 
     const isShowWelcome = ref(true);
-    const handleClick = (value: any) =>{
-      console.log("menu click",value)
-      // if (value.key === 'welcome'){
-      //   isShowWelcome.value = true;
-      // }else {
-      //   isShowWelcome.value = false;
-      // }
-      //上面是正常用法，下面是简化用法alt加entrr生成的
-      isShowWelcome.value = value.key === 'welcome';
-    };
+    let categoryIdd2 = 0;
 
-
-    onMounted(()=>{
-      handleQueryCategory();
+    const handleQueryEbook = () =>{
       console.log("onMounted");
-      axios.get("/ebook/selectEbook").then((response)=>{
+      axios.get("/ebook/selectEbook",{
+        params:{
+          page: 1,
+          size: 1000,
+          categoryIdd2: categoryIdd2
+        }
+      }).then((response)=>{
         const data = response.data;
         ebooks.value = data.content.list
         ebooks1.books = data.content
         // console.log(response)
       });
+    }
+
+    const handleClick = (value: any) =>{
+      console.log("menu click",value)
+      if (value.key === 'welcome'){
+        isShowWelcome.value = true;
+      }else {
+        categoryIdd2 = value.key;
+        isShowWelcome.value = false;
+        handleQueryEbook();
+      }
+      //上面是正常用法，下面是简化用法alt加entrr生成的
+      // isShowWelcome.value = value.key === 'welcome';
+    };
+
+
+
+    onMounted(()=>{
+      handleQueryCategory();
+      // handleQueryEbook();
     });
     return {
       ebooks,
