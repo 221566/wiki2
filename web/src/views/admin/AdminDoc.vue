@@ -3,104 +3,112 @@
     <a-layout-content
             :style="{ background: '#fff', padding: '24px', margin: 0, minHeight: '280px' }"
     >
-      <p>
-        <a-form
-                layout="inline"
-                :model="param">
-          <a-form-item>
-            <a-input v-model:value="param.name" placeholder="名称">
-            </a-input>
-          </a-form-item>
-          <a-form-item>
-            <a-button type="primary" @click="handleQuery()">
-              查询
-            </a-button>
-          </a-form-item>
-          <a-form-item>
-            <a-button type="primary" @click="add()">
-              新增
-            </a-button>
-          </a-form-item>
-        </a-form>
-      </p>
-      <a-table
-              :columns="columns"
-              :row-key="record => record.id"
-              :data-source="level1"
-              :loading="loading"
-              :pagination = "false"
-      >
-        <template #bodyCell="{ text: cover }">
-          <img v-if="cover" :src="cover" alt="avatar" />
-        </template>
-        <template v-slot:action="{ text, record }">
-          <a-space size="small">
+      <a-row>
+        <a-col :span="12">
+          <p>
+            <a-form
+                    layout="inline"
+                    :model="param">
+              <a-form-item>
+                <a-input v-model:value="param.name" placeholder="名称">
+                </a-input>
+              </a-form-item>
+              <a-form-item>
+                <a-button type="primary" @click="handleQuery()">
+                  查询
+                </a-button>
+              </a-form-item>
+              <a-form-item>
+                <a-button type="primary" @click="add()">
+                  新增
+                </a-button>
+              </a-form-item>
+            </a-form>
+          </p>
+          <a-table
+                  :columns="columns"
+                  :row-key="record => record.id"
+                  :data-source="level1"
+                  :loading="loading"
+                  :pagination = "false"
+          >
+            <template #bodyCell="{ text: cover }">
+              <img v-if="cover" :src="cover" alt="avatar" />
+            </template>
+            <template v-slot:action="{ text, record }">
+              <a-space size="small">
 
-            <a-button type="primary" @click="edit(record)">
-              编辑
-            </a-button>
+                <a-button type="primary" @click="edit(record)">
+                  编辑
+                </a-button>
 
-            <a-popconfirm
-                    title="删除后不可恢复，确认删除?"
-                    ok-text="是"
-                    cancel-text="否"
-                    @confirm="handleDelete(record.id)"
-            >
-              <a-button type="danger">
-                删除
-              </a-button>
-            </a-popconfirm>
+                <a-popconfirm
+                        title="删除后不可恢复，确认删除?"
+                        ok-text="是"
+                        cancel-text="否"
+                        @confirm="handleDelete(record.id)"
+                >
+                  <a-button type="danger">
+                    删除
+                  </a-button>
+                </a-popconfirm>
 
-          </a-space>
-        </template>
-      </a-table>
+              </a-space>
+            </template>
+          </a-table>
+        </a-col>
+        <a-col :span="12">
+          <a-form :model="doc" :label-col="{span: 6}" :wrapper-col="{ span: 18 }">
+            <a-form-item label="名称">
+              <a-input v-model:value="doc.name" />
+            </a-form-item>
+
+            <a-form-item label="父分类">
+              <a-tree-select
+                      v-model:value="doc.parent"
+                      show-search
+                      style="width: 100%"
+                      :dropdown-style="{ maxHeight: '400px', overflow: 'auto' }"
+                      placeholder="选择父文档"
+                      allow-clear
+                      tree-default-expand-all
+                      :tree-data="treeSelectData"
+                      :replaceFields="{title: 'name',key: 'id', value: 'id'}"
+              >
+              </a-tree-select>
+            </a-form-item>
+
+            <!--      <a-form-item label="父分类">-->
+            <!--&lt;!&ndash;        <a-input v-model:value="doc.parent" />&ndash;&gt;-->
+            <!--        <a-select-->
+            <!--                ref="select"-->
+            <!--                v-model:value="doc.parent"-->
+            <!--        >-->
+            <!--          <a-select-option value="0">无</a-select-option>-->
+            <!--          <a-select-option v-for="c in level1" :key="c.id" :value="c.id" :disabled="doc.id === c.id">{{c.name}}</a-select-option>-->
+            <!--        </a-select>-->
+            <!--      </a-form-item>-->
+            <a-form-item label="顺序">
+              <a-input v-model:value="doc.sort" type="tect"/>
+            </a-form-item>
+
+            <a-form-item label="内容">
+              <div id="content"></div>
+            </a-form-item>
+          </a-form>
+        </a-col>
+      </a-row>
+
     </a-layout-content>
   </a-layout>
-  <a-modal
-          v-model:visible="modalVisible"
-          title="文档"
-          :confirm-loading="modalLoading"
-          @ok="handleModalOk"
-  >
-    <a-form :model="doc" :label-col="{span: 6}" :wrapper-col="{ span: 18 }">
-      <a-form-item label="名称">
-        <a-input v-model:value="doc.name" />
-      </a-form-item>
-
-      <a-form-item label="父分类">
-        <a-tree-select
-                v-model:value="doc.parent"
-                show-search
-                style="width: 100%"
-                :dropdown-style="{ maxHeight: '400px', overflow: 'auto' }"
-                placeholder="选择父文档"
-                allow-clear
-                tree-default-expand-all
-                :tree-data="treeSelectData"
-                :replaceFields="{title: 'name',key: 'id', value: 'id'}"
-        >
-        </a-tree-select>
-      </a-form-item>
-
-<!--      <a-form-item label="父分类">-->
-<!--&lt;!&ndash;        <a-input v-model:value="doc.parent" />&ndash;&gt;-->
-<!--        <a-select-->
-<!--                ref="select"-->
-<!--                v-model:value="doc.parent"-->
-<!--        >-->
-<!--          <a-select-option value="0">无</a-select-option>-->
-<!--          <a-select-option v-for="c in level1" :key="c.id" :value="c.id" :disabled="doc.id === c.id">{{c.name}}</a-select-option>-->
-<!--        </a-select>-->
-<!--      </a-form-item>-->
-      <a-form-item label="顺序">
-        <a-input v-model:value="doc.sort" type="tect"/>
-      </a-form-item>
-
-      <a-form-item label="内容">
-        <div id="content"></div>
-      </a-form-item>
-    </a-form>
-  </a-modal>
+<!--  <a-modal-->
+<!--          v-model:visible="modalVisible"-->
+<!--          title="文档"-->
+<!--          :confirm-loading="modalLoading"-->
+<!--          @ok="handleModalOk"-->
+<!--  >-->
+<!--    -->
+<!--  </a-modal>-->
 </template>
 
 <script lang="ts">
@@ -217,9 +225,9 @@
         // 为选择树添加一个"无"unshift往数组前面添加一个元素，push是往数组后面添加一个元素
         treeSelectData.value.unshift({id: 0, name: '无'});
 
-        setTimeout(function () {
-          editor.create();
-        },100)
+        // setTimeout(function () {
+        //   editor.create();
+        // },100)
       };
 
       const add = () => {
@@ -232,9 +240,9 @@
 
         // 为选择树添加一个"无"
         treeSelectData.value.unshift({id: 0, name: '无'});
-        setTimeout(function () {
-          editor.create();
-        },100)
+        // setTimeout(function () {
+        //   editor.create();
+        // },100)
 
       };
 
@@ -333,6 +341,7 @@
 
       onMounted(() => {
         handleQuery();
+        editor.create();
       });
       return {
         level1,
