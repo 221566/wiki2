@@ -199,7 +199,8 @@
           }
         });
       };
-      const doc = ref({});
+      const doc = ref();
+      doc.value = {};
       const modalVisible = ref(false);
       const modalLoading = ref(false);
       const editor = new E('#content');
@@ -207,6 +208,7 @@
 
       const handleModalOk = () => {
         modalLoading.value = false;
+        doc.value.content = editor.txt.html();
         axios.post("/doc/save",doc.value).then((response) =>{
           const data = response.data;
           if (data.success){
