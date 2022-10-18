@@ -1,7 +1,8 @@
 <template>
     <a-layout>
         <a-layout-content :style="{background: '#fff',padding: '24px',margin: 0,minHeight: '280'}">
-           <a-row>
+           <h3 v-if = "level1.length === 0">对不起，找不到相关文档</h3>
+            <a-row>
                 <a-col :span="6">
                    <a-tree
                        v-if="level1.length > 0"
@@ -9,6 +10,7 @@
                        @select="onSelect"
                        :replaceFields="{title: 'name',key: 'id', value: 'id'}"
                        :defaultExpandAll="true"
+                       :defaultSelectedKeys="defaultSelectedKeys"
                    >
                    </a-tree>
                </a-col>
@@ -35,6 +37,9 @@
             const route = useRoute()
             const docs = ref();
             const html = ref();
+            //初始化定义，初始的时候放一个空
+            const defaultSelectedKeys = ref();
+            defaultSelectedKeys.value = [];
 
             /**
              * 一级分类树，children属性就是二级分类
@@ -49,22 +54,6 @@
              */
             const level1 = ref(); // 一级分类树，children属性就是二级分类
             level1.value = [];
-            /**
-             * 数据查询
-             **/
-            const handleQuery = () => {
-                axios.get("/doc/all/"+route.query.ebookId).then((response) =>{
-                    const data = response.data;
-                    if(data.success){
-                        docs.value = data.content;
-
-                        level1.value = [];
-                        level1.value = Tool.array2Tree(docs.value, 0);
-                    }else {
-                        message.error(data.message)
-                    }
-                });
-            };
 
             //内容查询
             const handleQueryContent = (id: number) => {
@@ -77,6 +66,31 @@
                     }
                 });
             };
+
+            /**
+             * 数据查询
+             **/
+            const handleQuery = () => {
+                axios.get("/doc/all/"+route.query.ebookId).then((response) =>{
+                    const data = response.data;
+                    if(data.success){
+                        docs.value = data.content;
+
+                        level1.value = [];
+                        level1.value = Tool.array2Tree(docs.value, 0);
+                        //判断这个电子书舒服有内容，有的话在去查询
+                        if (Tool.isNotEmpty(level1)) {
+                            //把这个节点设置成选择状态
+                            defaultSelectedKeys.value = [level1.value[0].id];
+                            //根据这个节点去查内容
+                            handleQueryContent(level1.value[0].id);
+                        }
+                    }else {
+                        message.error(data.message)
+                    }
+                });
+            };
+
             const onSelect = (selectedKeys: any, info: any) => {
                 console.log('selected', selectedKeys, info);
                 if (Tool.isNotEmpty(selectedKeys)) {
@@ -97,7 +111,8 @@
             return {
                 level1,
                 html,
-                onSelect
+                onSelect,
+                defaultSelectedKeys
                 // handleQuery,
             }
         }
