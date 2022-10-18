@@ -13,7 +13,7 @@
                    </a-tree>
                </a-col>
                <a-col :span="18">
-
+                    <div :innerHTML="html"></div>
                </a-col>
            </a-row>
         </a-layout-content>
@@ -33,8 +33,8 @@
         name: 'AdminDoc',
         setup() {
             const route = useRoute()
-
             const docs = ref();
+            const html = ref();
 
             /**
              * 一级分类树，children属性就是二级分类
@@ -66,6 +66,27 @@
                 });
             };
 
+            //内容查询
+            const handleQueryContent = (id: number) => {
+                axios.get("/doc/findContent/"+id).then((response) =>{
+                    const data = response.data;
+                    if(data.success){
+                        html.value = data.content
+                    }else {
+                        message.error(data.message)
+                    }
+                });
+            };
+            const onSelect = (selectedKeys: any, info: any) => {
+                console.log('selected', selectedKeys, info);
+                if (Tool.isNotEmpty(selectedKeys)) {
+                    // 选中某一节点时，加载该节点的文档信息
+                    // doc.value = info.selectedNodes[0].props;
+                    // 加载内容
+                    handleQueryContent(selectedKeys[0]);
+                }
+            };
+
             /**
              * 表格点击页码时触发
              */
@@ -75,6 +96,8 @@
             });
             return {
                 level1,
+                html,
+                onSelect
                 // handleQuery,
             }
         }
