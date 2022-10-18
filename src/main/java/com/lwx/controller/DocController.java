@@ -2,8 +2,8 @@ package com.lwx.controller;
 
 import com.lwx.req.DocQueryReq;
 import com.lwx.req.DocSaveReq;
-import com.lwx.resp.DocQueryResp;
 import com.lwx.resp.CommonResp;
+import com.lwx.resp.DocQueryResp;
 import com.lwx.resp.PageResp;
 import com.lwx.service.DocService;
 import org.springframework.web.bind.annotation.*;
@@ -56,6 +56,14 @@ public class DocController {
         //把string转成一个集合，先转成数组在转集合,idStr.split(",")根据逗号转成数组
         List<String> list = Arrays.asList(idStr.split(","));
         docService.delete(list);
+        return resp;
+    }
+
+    @GetMapping("/findContent/{id}")
+    public CommonResp findContent(@PathVariable Long id){
+        CommonResp<String> resp = new CommonResp<>();
+        String content = docService.findContent(id);
+        resp.setContent(content);
         return resp;
     }
 }
