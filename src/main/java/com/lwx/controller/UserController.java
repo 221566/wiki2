@@ -6,6 +6,7 @@ import com.lwx.resp.CommonResp;
 import com.lwx.resp.UserQueryResp;
 import com.lwx.resp.PageResp;
 import com.lwx.service.UserService;
+import org.springframework.util.DigestUtils;
 import org.springframework.web.bind.annotation.*;
 
 import javax.annotation.Resource;
@@ -35,6 +36,7 @@ public class UserController {
      * 3、axios的post提交是用appliction/json方式提交的所以要使用@RequestBody注解才能接收到数据
      */
     public CommonResp save(@Valid @RequestBody UserSaveReq userSaveReq){
+        userSaveReq.setPassword(DigestUtils.md5DigestAsHex(userSaveReq.getPassword().getBytes()));
         CommonResp resp = new CommonResp<>();
         userService.save(userSaveReq);
         return resp;
