@@ -40,11 +40,11 @@
         <template v-slot:action="{ text, record }">
           <a-space size="small">
 
-            <router-link :to="'/admin/doc?userId='+record.id">
-              <a-button type="primary">
-                文档管理
-              </a-button>
-            </router-link>
+<!--            <router-link :to="'/admin/doc?userId='+record.id">-->
+<!--              <a-button type="primary">-->
+<!--                文档管理-->
+<!--              </a-button>-->
+<!--            </router-link>-->
             <a-button type="primary" @click="edit(record)">
               编辑
             </a-button>
@@ -72,18 +72,14 @@
           @ok="handleModalOk"
   >
     <a-form :model="user" :label-col="{span: 6}" :wrapper-col="{ span: 18 }">
-      <a-form-item label="封面">
-        <a-input v-model:value="user.cover" />
+      <a-form-item label="登录名">
+        <a-input v-model:value="user.loginName" :disabled="!!user.id"/>
       </a-form-item>
-      <a-form-item label="名称">
+      <a-form-item label="昵称">
         <a-input v-model:value="user.name" />
       </a-form-item>
-      <a-form-item label="分类">
-        <a-cascader
-                v-model:value="categoryIds"
-                :field-names="{ label: 'name', value: 'id', children: 'children' }"
-                :options="level1"
-        />
+      <a-form-item label="密码">
+        <a-input v-model:value="user.password"/>
       </a-form-item>
       <a-form-item label="描述">
         <a-input v-model:value="user.desc" type="tect"/>
