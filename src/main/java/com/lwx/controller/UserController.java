@@ -1,10 +1,11 @@
 package com.lwx.controller;
 
 import com.lwx.req.UserQueryReq;
+import com.lwx.req.UserResetPasswordReq;
 import com.lwx.req.UserSaveReq;
 import com.lwx.resp.CommonResp;
-import com.lwx.resp.UserQueryResp;
 import com.lwx.resp.PageResp;
+import com.lwx.resp.UserQueryResp;
 import com.lwx.service.UserService;
 import org.springframework.util.DigestUtils;
 import org.springframework.web.bind.annotation.*;
@@ -46,6 +47,14 @@ public class UserController {
     public CommonResp delete(@PathVariable Long id){
         CommonResp resp = new CommonResp<>();
         userService.delete(id);
+        return resp;
+    }
+
+    @PostMapping("/resetPassword")
+    public CommonResp resetPassword(@Valid @RequestBody UserResetPasswordReq req){
+        req.setPassword(DigestUtils.md5DigestAsHex(req.getPassword().getBytes()));
+        CommonResp resp = new CommonResp<>();
+        userService.resetPassword(req);
         return resp;
     }
 }

@@ -48,7 +48,9 @@
             <a-button type="primary" @click="edit(record)">
               编辑
             </a-button>
-
+            <a-button type="primary" @click="resetPassword(record)">
+              重置密码
+            </a-button>
             <a-popconfirm
                     title="删除后不可恢复，确认删除?"
                     ok-text="是"
@@ -67,7 +69,7 @@
   </a-layout>
   <a-modal
           v-model:visible="modalVisible"
-          title="电子书"
+          title="用户信息"
           :confirm-loading="modalLoading"
           @ok="handleModalOk"
   >
@@ -84,6 +86,19 @@
 <!--      <a-form-item label="描述">-->
 <!--        <a-input v-model:value="user.desc" type="tect"/>-->
 <!--      </a-form-item>-->
+    </a-form>
+  </a-modal>
+
+  <a-modal
+          v-model:visible="resetmodalVisible"
+          title="重置密码"
+          :confirm-loading="resetmodalLoading"
+          @ok="resethandleModalOk"
+  >
+    <a-form :model="user" :label-col="{span: 6}" :wrapper-col="{ span: 18 }">
+      <a-form-item label="密码">
+        <a-input v-model:value="user.password"/>
+      </a-form-item>
     </a-form>
   </a-modal>
 </template>
@@ -162,7 +177,7 @@
       const modalVisible = ref(false);
       const modalLoading = ref(false);
       const handleModalOk = () => {
-        modalLoading.value = false;
+        modalLoading.value = true;
         user.value.category1Id = categoryIds.value[0];
         user.value.category2Id = categoryIds.value[1];
         user.value.password = hexMd5(user.value.password + KEY);
@@ -231,6 +246,34 @@
           size: pagination.pageSize
         });
       };
+
+      const resetmodalVisible = ref(false);
+      const resetmodalLoading = ref(false);
+      const resethandleModalOk = () => {
+        resetmodalLoading.value = true;
+        user.value.password = hexMd5(user.value.password + KEY);
+        axios.post("/user/resetPassword",user.value).then((response) =>{
+          resetmodalLoading.value = false;
+          const data = response.data;
+          if (data.success){
+            resetmodalVisible.value = false;
+            //重新加载列表
+            handleQuery({
+              page:pagination.value.current,//重新查询分页组件当前所在的页码
+              size:pagination.value.pageSize
+            });
+          }else {
+            message.error(data.message);
+          }
+        });
+      };
+
+      const resetPassword = (record: any) => {
+        resetmodalVisible.value = true;
+        user.value = Tool.copy(record);
+        user.value.password = null;
+      };
+
       onMounted(() => {
         handleQuery({
           page: 1,
@@ -256,7 +299,12 @@
         modalVisible,
         modalLoading,
         handleModalOk,
-        user
+        user,
+
+        resetmodalVisible,
+        resetmodalLoading,
+        resethandleModalOk,
+        resetPassword,
       }
     }
   });

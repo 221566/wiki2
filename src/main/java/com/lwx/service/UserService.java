@@ -8,9 +8,10 @@ import com.lwx.exception.BusinessException;
 import com.lwx.exception.BusinessExceptionCode;
 import com.lwx.mapper.UserMapper;
 import com.lwx.req.UserQueryReq;
+import com.lwx.req.UserResetPasswordReq;
 import com.lwx.req.UserSaveReq;
-import com.lwx.resp.UserQueryResp;
 import com.lwx.resp.PageResp;
+import com.lwx.resp.UserQueryResp;
 import com.lwx.util.CopyUtil;
 import com.lwx.util.SnowFlake;
 import org.slf4j.Logger;
@@ -98,4 +99,11 @@ public class UserService {
             return userList.get(0);
         }
     }
+
+    public void resetPassword(UserResetPasswordReq req){
+        User user = CopyUtil.copy(req,User.class);
+        userMapper.updateByPrimaryKeySelective(user);
+
+    }
+
 }
