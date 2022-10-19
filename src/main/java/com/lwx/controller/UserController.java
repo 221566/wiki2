@@ -1,5 +1,6 @@
 package com.lwx.controller;
 
+import com.alibaba.fastjson.JSONObject;
 import com.lwx.req.UserLoginReq;
 import com.lwx.req.UserQueryReq;
 import com.lwx.req.UserResetPasswordReq;
@@ -9,22 +10,36 @@ import com.lwx.resp.PageResp;
 import com.lwx.resp.UserLoginResp;
 import com.lwx.resp.UserQueryResp;
 import com.lwx.service.UserService;
+import com.lwx.util.SnowFlake;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.data.redis.core.RedisTemplate;
 import org.springframework.util.DigestUtils;
 import org.springframework.web.bind.annotation.*;
 
 import javax.annotation.Resource;
 import javax.validation.Valid;
+import java.util.concurrent.TimeUnit;
 
 @RestController
 @RequestMapping("/user")
 public class UserController {
+    private static final Logger LOG = LoggerFactory.getLogger(UserController.class);
     @Resource
     private UserService userService;
+
+    @Resource
+    private RedisTemplate redisTemplate;
+
+    @Autowired
+    private SnowFlake snowFlake;
 
     @GetMapping("/selectUser")
     public CommonResp selectUser(@Valid UserQueryReq userReq){
         CommonResp<PageResp<UserQueryResp>> resp = new CommonResp<>();
         PageResp<UserQueryResp> list = userService.selectUser(userReq);
+
         resp.setContent(list);
         return resp;
     }
@@ -65,6 +80,12 @@ public class UserController {
         req.setPassword(DigestUtils.md5DigestAsHex(req.getPassword().getBytes()));
         CommonResp<UserLoginResp> resp = new CommonResp<>();
         UserLoginResp userLoginResp = userService.login(req);
+
+        //生成单点登录token并放入redis中
+        Long token = snowFlake.nextId();
+        LOG.info("生成单点登录token：{}，并放入redis中", token);
+        userLoginResp.setToken(token.toString());
+        redisTemplate.opsForValue().set(token, JSONObject.toJSON(userLoginResp),3600 * 24, TimeUnit.SECONDS);
         resp.setContent(userLoginResp);
         return resp;
     }

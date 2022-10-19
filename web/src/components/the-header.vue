@@ -2,7 +2,6 @@
     <a-layout-header class="header">
         <div class="logo" />
         <a-menu
-                v-model:selectedKeys="selectedKeys1"
                 theme="dark"
                 mode="horizontal"
                 :style="{ lineHeight: '64px' }"
@@ -12,7 +11,10 @@
             <a-menu-item key="/admin/ebook"><router-link to="/admin/ebook">电子书管理</router-link></a-menu-item>
             <a-menu-item key="/admin/category"><router-link to="/admin/category">分类管理</router-link></a-menu-item>
             <a-menu-item key="/about"><router-link to="/about">关于我们</router-link></a-menu-item>
-            <a class="login-menu" @click="showLoginModal"><span>登录</span></a>
+            <a class="login-menu" v-show="user.id">
+                <span>您好：{{user.name}}</span>
+            </a>
+            <a class="login-menu" v-show="!user.id" @click="showLoginModal"><span>登录</span></a>
         </a-menu>
 
         <a-modal
@@ -48,9 +50,13 @@
         //     msg: String,
         // },
         setup(){
+            //登录后保存
+            const user = ref();
+            user.value = {};
+            //登录
             const loginUser = ref({
                 loginName: "test",
-                password: "test"
+                password: "test123"
             });
             const loginModalVisible = ref(false);
             const loginModalLoading = ref(false);
@@ -67,7 +73,7 @@
                     if (data.success) {
                         loginModalVisible.value = false;
                         message.success("登录成功！");
-
+                        user.value = data.content;
                         // store.commit("setUser", data.content);
                     } else {
                         message.error(data.message);
@@ -80,7 +86,8 @@
                 loginModalLoading,
                 showLoginModal,
                 login,
-                loginUser
+                loginUser,
+                user
             }
         }
     });

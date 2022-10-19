@@ -9,4 +9,6 @@ public class UserLoginResp {
     private String loginName;
 
     private String name;
+
+    private String token;
 }
