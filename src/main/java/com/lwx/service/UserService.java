@@ -7,10 +7,12 @@ import com.lwx.domain.UserExample;
 import com.lwx.exception.BusinessException;
 import com.lwx.exception.BusinessExceptionCode;
 import com.lwx.mapper.UserMapper;
+import com.lwx.req.UserLoginReq;
 import com.lwx.req.UserQueryReq;
 import com.lwx.req.UserResetPasswordReq;
 import com.lwx.req.UserSaveReq;
 import com.lwx.resp.PageResp;
+import com.lwx.resp.UserLoginResp;
 import com.lwx.resp.UserQueryResp;
 import com.lwx.util.CopyUtil;
 import com.lwx.util.SnowFlake;
@@ -104,6 +106,24 @@ public class UserService {
         User user = CopyUtil.copy(req,User.class);
         userMapper.updateByPrimaryKeySelective(user);
 
+    }
+
+    public UserLoginResp login(UserLoginReq req){
+        User user = selectByLoginName(req.getLoginName());
+        if (ObjectUtils.isEmpty(user)){
+            //user是空，用户名不存在
+            LOG.info("用户名不存在，{}",req.getLoginName());
+            throw new BusinessException(BusinessExceptionCode.LOGIN_USER_ERROR);
+        }else {
+            if (user.getPassword().equals(req.getPassword())){
+                UserLoginResp userLoginResp = CopyUtil.copy(user,UserLoginResp.class);
+                return userLoginResp;
+            }else {
+                //密码不对
+                LOG.info("密码不正确，{}",req.getPassword(),user.getPassword());
+                throw new BusinessException(BusinessExceptionCode.LOGIN_USER_ERROR);
+            }
+        }
     }
 
 }

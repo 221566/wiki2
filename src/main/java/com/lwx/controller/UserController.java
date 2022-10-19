@@ -1,10 +1,12 @@
 package com.lwx.controller;
 
+import com.lwx.req.UserLoginReq;
 import com.lwx.req.UserQueryReq;
 import com.lwx.req.UserResetPasswordReq;
 import com.lwx.req.UserSaveReq;
 import com.lwx.resp.CommonResp;
 import com.lwx.resp.PageResp;
+import com.lwx.resp.UserLoginResp;
 import com.lwx.resp.UserQueryResp;
 import com.lwx.service.UserService;
 import org.springframework.util.DigestUtils;
@@ -55,6 +57,15 @@ public class UserController {
         req.setPassword(DigestUtils.md5DigestAsHex(req.getPassword().getBytes()));
         CommonResp resp = new CommonResp<>();
         userService.resetPassword(req);
+        return resp;
+    }
+
+    @PostMapping("/login")
+    public CommonResp login(@Valid @RequestBody UserLoginReq req){
+        req.setPassword(DigestUtils.md5DigestAsHex(req.getPassword().getBytes()));
+        CommonResp<UserLoginResp> resp = new CommonResp<>();
+        UserLoginResp userLoginResp = userService.login(req);
+        resp.setContent(userLoginResp);
         return resp;
     }
 }
