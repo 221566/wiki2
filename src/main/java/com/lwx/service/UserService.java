@@ -77,6 +77,7 @@ public class UserService {
              * updateByPrimaryKeySelective加上这个的话user.setLoginName(null);把LoginName清空然后就不会更新这个字段
              */
             user.setLoginName(null);
+            user.setPassword(null);
             userMapper.updateByPrimaryKeySelective(user);
         }
     }
