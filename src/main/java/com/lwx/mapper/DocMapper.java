@@ -2,8 +2,9 @@ package com.lwx.mapper;
 
 import com.lwx.domain.Doc;
 import com.lwx.domain.DocExample;
-import java.util.List;
 import org.apache.ibatis.annotations.Param;
+
+import java.util.List;
 
 public interface DocMapper {
     long countByExample(DocExample example);
@@ -27,4 +28,6 @@ public interface DocMapper {
     int updateByPrimaryKeySelective(Doc record);
 
     int updateByPrimaryKey(Doc record);
+
+    void increaseViewCount(@Param("id") Long id);
 }

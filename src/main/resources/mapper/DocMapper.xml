@@ -240,4 +240,8 @@
       vote_count = #{voteCount,jdbcType=INTEGER}
     where id = #{id,jdbcType=BIGINT}
   </update>
+
+  <update id="increaseViewCount" parameterType="com.lwx.domain.Doc">
+    update doc set view_count = view_count + 1 where id = #{id}
+  </update>
 </mapper>

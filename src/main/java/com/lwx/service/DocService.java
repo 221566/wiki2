@@ -80,6 +80,8 @@ public class DocService {
         Content content = CopyUtil.copy(req,Content.class);
         if (ObjectUtils.isEmpty(req.getId())){
             doc.setId(snowFlake.nextId());
+            doc.setViewCount(0);
+            doc.setVoteCount(0);
             docMapper.insert(doc);
 
             content.setId(doc.getId());
@@ -107,6 +109,8 @@ public class DocService {
 
     public String findContent(Long id){
         Content content = contentMapper.selectByPrimaryKey(id);
+        //文档阅读数加一
+        docMapper.increaseViewCount(id);
         if (ObjectUtils.isEmpty(content)) {
             return "";
         } else {
