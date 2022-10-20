@@ -46,6 +46,7 @@ public class LogAspect {
         // 开始打印请求日志
         ServletRequestAttributes attributes = (ServletRequestAttributes) RequestContextHolder.getRequestAttributes();
         HttpServletRequest request = attributes.getRequest();
+        System.out.println("信息"+request);
         Signature signature = joinPoint.getSignature();
         String name = signature.getName();
 
