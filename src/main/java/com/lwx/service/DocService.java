@@ -5,6 +5,8 @@ import com.github.pagehelper.PageInfo;
 import com.lwx.domain.Content;
 import com.lwx.domain.Doc;
 import com.lwx.domain.DocExample;
+import com.lwx.exception.BusinessException;
+import com.lwx.exception.BusinessExceptionCode;
 import com.lwx.mapper.ContentMapper;
 import com.lwx.mapper.DocMapper;
 import com.lwx.req.DocQueryReq;
@@ -12,6 +14,8 @@ import com.lwx.req.DocSaveReq;
 import com.lwx.resp.DocQueryResp;
 import com.lwx.resp.PageResp;
 import com.lwx.util.CopyUtil;
+import com.lwx.util.RedisUtil;
+import com.lwx.util.RequestContext;
 import com.lwx.util.SnowFlake;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -30,6 +34,9 @@ public class DocService {
 
     @Resource
     private ContentMapper contentMapper;
+
+    @Resource
+    private RedisUtil redisUtil;
 
     @Autowired
     private SnowFlake snowFlake;
@@ -118,8 +125,16 @@ public class DocService {
         }
     }
 
-    public void vote(Long id){
-        //文档点赞数加一
-        docMapper.increaseVoteCount(id);
-    }
+    /**
+     * 点赞
+     */
+    public void vote(Long id) {
+        // docMapperCust.increaseVoteCount(id);
+        // 远程IP+doc.id作为key，24小时内不能重复
+        String ip = RequestContext.getRemoteAddr();
+        if (redisUtil.validateRepeat("DOC_VOTE_" + id + "_" + ip, 5000)) {
+            docMapper.increaseVoteCount(id);
+        } else {
+            throw new BusinessException(BusinessExceptionCode.VOTE_REPEAT);
+        }
 }
