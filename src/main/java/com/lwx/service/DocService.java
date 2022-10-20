@@ -117,4 +117,9 @@ public class DocService {
             return content.getContent();
         }
     }
+
+    public void vote(Long id){
+        //文档点赞数加一
+        docMapper.increaseVoteCount(id);
+    }
 }
