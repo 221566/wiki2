@@ -17,7 +17,6 @@ import com.lwx.util.CopyUtil;
 import com.lwx.util.RedisUtil;
 import com.lwx.util.RequestContext;
 import com.lwx.util.SnowFlake;
-import com.lwx.websocket.WebSocketServer;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -42,8 +41,11 @@ public class DocService {
     @Autowired
     private SnowFlake snowFlake;
 
-    @Autowired
-    private WebSocketServer webSocketServer;
+//    @Autowired
+//    private WebSocketServer webSocketServer;
+
+    @Resource
+    public WsService wsService;
 
     public List<DocQueryResp> all(Long ebookId)  {
         DocExample docExample = new DocExample();
@@ -143,7 +145,7 @@ public class DocService {
         }
         //推送消息
         Doc doc = docMapper.selectByPrimaryKey(id);
-        webSocketServer.sendInfo("【"+doc.getName()+"】被点赞");
+        wsService.sendInfo("【"+doc.getName()+"】被点赞");
     }
 
     public void updateEbookInfo(){

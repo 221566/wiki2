@@ -7,12 +7,14 @@ import org.springframework.boot.SpringApplication;
 import org.springframework.boot.autoconfigure.SpringBootApplication;
 import org.springframework.context.annotation.ComponentScan;
 import org.springframework.core.env.Environment;
+import org.springframework.scheduling.annotation.EnableAsync;
 import org.springframework.scheduling.annotation.EnableScheduling;
 
 @SpringBootApplication()
 @ComponentScan("com.lwx")//可以支持多个包加{"com.lwx","com.lwx","com.lwx"}然后逗号分隔
 @MapperScan("com.lwx.mapper")
 @EnableScheduling
+@EnableAsync
 public class Wiki2Application {
     private static final Logger LOG = LoggerFactory.getLogger(Wiki2Application.class);
     public static void main(String[] args) {
