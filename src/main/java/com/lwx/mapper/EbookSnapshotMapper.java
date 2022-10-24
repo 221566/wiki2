@@ -2,8 +2,9 @@ package com.lwx.mapper;
 
 import com.lwx.domain.EbookSnapshot;
 import com.lwx.domain.EbookSnapshotExample;
-import java.util.List;
 import org.apache.ibatis.annotations.Param;
+
+import java.util.List;
 
 public interface EbookSnapshotMapper {
     long countByExample(EbookSnapshotExample example);
@@ -27,4 +28,6 @@ public interface EbookSnapshotMapper {
     int updateByPrimaryKeySelective(EbookSnapshot record);
 
     int updateByPrimaryKey(EbookSnapshot record);
+
+    public void genSnapshot();
 }
