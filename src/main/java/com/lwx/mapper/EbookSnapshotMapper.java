@@ -2,6 +2,7 @@ package com.lwx.mapper;
 
 import com.lwx.domain.EbookSnapshot;
 import com.lwx.domain.EbookSnapshotExample;
+import com.lwx.resp.StatisticResp;
 import org.apache.ibatis.annotations.Param;
 
 import java.util.List;
@@ -30,4 +31,8 @@ public interface EbookSnapshotMapper {
     int updateByPrimaryKey(EbookSnapshot record);
 
     public void genSnapshot();
+
+    List<StatisticResp> getStatistic();
+
+//    List<StatisticResp> get30Statistic();
 }
