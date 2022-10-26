@@ -1,12 +1,14 @@
 package com.lwx.resp;
 
+import com.fasterxml.jackson.annotation.JsonFormat;
 import lombok.Data;
 
 import java.util.Date;
 
 @Data
 public class StatisticResp {
-    private Date data;
+    @JsonFormat(pattern = "MM-dd",timezone = "GMT+8")
+    private Date date;
 
     private int viewCount;
 
@@ -15,6 +17,5 @@ public class StatisticResp {
     private int viewIncrease;
 
     private int voteIncrease;
-
 
 }
