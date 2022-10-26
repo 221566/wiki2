@@ -4,6 +4,7 @@ package com.lwx.config;
 import com.lwx.interceptor.LoginInterceptor;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.web.servlet.config.annotation.InterceptorRegistry;
+import org.springframework.web.servlet.config.annotation.ResourceHandlerRegistry;
 import org.springframework.web.servlet.config.annotation.WebMvcConfigurer;
 
 import javax.annotation.Resource;
@@ -29,7 +30,9 @@ public class SpringMvcConfig implements WebMvcConfigurer {
                         "/doc/all/**",
                         "/doc/vote/**",
                         "/doc/findContent/**",
-                        "/ebookSnapshot/**"
+                        "/ebookSnapshot/**",
+                        "/ebook/upload/avatar",
+                        "/file/**"
                 );
 
 //        registry.addInterceptor(actionInterceptor)
@@ -37,5 +40,10 @@ public class SpringMvcConfig implements WebMvcConfigurer {
 //                        "/*/save",
 //                        "/*/delete/**",
 //                        "/*/reset-password");
+    }
+
+    @Override
+    public void addResourceHandlers(ResourceHandlerRegistry resourceHandlerRegistry){
+        resourceHandlerRegistry.addResourceHandler("/file/**").addResourceLocations("file:D:/file/wiki/");
     }
 }
